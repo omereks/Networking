@@ -1,2 +1,3 @@
 biu.ac.il,1.2.3.4,180
 google.co.il,1.2.3.5,240
+gogle.co.il,1.2.3.7,240
