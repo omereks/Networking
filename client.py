@@ -7,7 +7,7 @@ serverPort = sys.argv[2]
 while True:
     siteAddress = input('Enter site address')
     b = bytes(siteAddress, 'utf-8')
-    s.sendto(b, (serverIP, serverPort))
     s.bind(('', 60237))                    # TODO maybe should remove it
+    s.sendto(b, (serverIP, serverPort))
     data, addr = s.recvfrom(1024)
     print(str(data), addr)
