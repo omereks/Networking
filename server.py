@@ -25,8 +25,11 @@ def searchDomainInList (listIPs, domain):
 		i = i+1
 	return []
 
-
-
+def makeFromArrayToString(arr):
+	ret = ""
+	for w in arr:
+		ret = ret + w + ","
+	return ret
 
 
 
@@ -41,15 +44,20 @@ s.bind(('', int(myPort)))
 
 while True:
 	clientDomian, addr = s.recvfrom(1024)
-
-	if parentIP != -1 and parentPort != -1:
+	clientDomian = clientDomian.decode('utf-8')
+	#noraml server
+	if parentIP != "-1" and parentPort != -1:
 		listIps = creatListFromFile(ipsFileName)
 		specificLine = searchDomainInList(listIps, clientDomian) 
+					#TODO ttl
 		if specificLine != []:
-			b = bytes(specificLine, 'utf-8')
+			#b = str(specificLine)
+			b = makeFromArrayToString(specificLine)
+			b = bytes(b, 'utf-8')
 			s.sendto(b, addr)
 		else:
 			pass	#TODO sending to parent server
 
+	#parent server
 	if parentIP == -1 and parentPort == -1:
 		pass		# TODO parent sever
