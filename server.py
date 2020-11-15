@@ -8,6 +8,7 @@ def creatListFromFile(fileName):
 	listFile = []
 	for line in Lines: 
 		listFile.append(line.split(","))
+	file1.close
 	return listFile
 
 # getting 2D list and look for the domain
@@ -25,6 +26,7 @@ def searchDomainInList (listIPs, domain):
 		i = i+1
 	return []
 
+#making a one line sring from array and split by ','
 def makeFromArrayToString(arr):
 	ret = ""
 	for w in arr:
@@ -45,13 +47,14 @@ s.bind(('', int(myPort)))
 while True:
 	clientDomian, addr = s.recvfrom(1024)
 	clientDomian = clientDomian.decode('utf-8')
+	
 	#noraml server
 	if parentIP != "-1" and parentPort != -1:
 		listIps = creatListFromFile(ipsFileName)
 		specificLine = searchDomainInList(listIps, clientDomian) 
-					#TODO ttl
+					#TODO ttl chcek
+		
 		if specificLine != []:
-			#b = str(specificLine)
 			b = makeFromArrayToString(specificLine)
 			b = bytes(b, 'utf-8')
 			s.sendto(b, addr)
