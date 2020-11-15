@@ -34,7 +34,7 @@ def searchDomainInList (listIPs, domain):
 			if domainInList == str(domain):
 				return listIPs[i]
 		except:
-			pass 								# todo finish it
+			pass
 		i = i+1
 	return []
 # function take an array and convert to string
