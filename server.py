@@ -1,13 +1,18 @@
 import socket
 import sys
+import time
 
 # getting a file and returning 2D list
-def creatListFromFile(fileName):	
-	file1 = open(fileName, 'r') 
+def creatListFromFile(fileName):
+	file1 = open(fileName, 'r')
 	Lines = file1.readlines()
 	listFile = []
-	for line in Lines: 
+	i = 0
+	for line in Lines:
 		listFile.append(line.split(","))
+		# enter time stamp to when the server learned the info
+		line[i].append(time.time())
+		i = i + 1
 	return listFile
 
 # getting 2D list and look for the domain
@@ -17,14 +22,17 @@ def searchDomainInList (listIPs, domain):
 	i = 0
 	for oneList in listIPs:
 		try:
-			domiainInList = listIPs[i][0]
-			if domiainInList == str(domain):
+			domainInList = listIPs[i][0]
+			# if TTL passed
+			if listIps[i][3] + listIps[i][2] < time.time():
+				listIPs.remove(i)
+			if domainInList == str(domain):
 				return listIPs[i]
 		except:
-			pass
+			pass 								# todo finish it
 		i = i+1
 	return []
-
+# function take an array and convert to string
 def makeFromArrayToString(arr):
 	ret = ""
 	for w in arr:
@@ -32,32 +40,30 @@ def makeFromArrayToString(arr):
 	return ret
 
 
-
+# argumnets from command line
 myPort = sys.argv[1]
 parentIP = sys.argv[2]
 parentPort = sys.argv[3]
 ipsFileName = sys.argv[4]
-
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
-s.bind(('', int(myPort)))	
+# initalize a socket
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.bind(('', int(myPort)))
 
 
 while True:
-	clientDomian, addr = s.recvfrom(1024)
-	clientDomian = clientDomian.decode('utf-8')
-	#noraml server
-	if parentIP != "-1" and parentPort != -1:
-		listIps = creatListFromFile(ipsFileName)
-		specificLine = searchDomainInList(listIps, clientDomian) 
-					#TODO ttl
-		if specificLine != []:
-			#b = str(specificLine)
-			b = makeFromArrayToString(specificLine)
-			b = bytes(b, 'utf-8')
-			s.sendto(b, addr)
-		else:
-			pass	#TODO sending to parent server
-
-	#parent server
-	if parentIP == -1 and parentPort == -1:
-		pass		# TODO parent sever
+	clientDomain, clientAddress = s.recvfrom(1024)
+	clientDomain = clientDomain.decode('utf-8')
+	listIps = creatListFromFile(ipsFileName)
+	specificLine = searchDomainInList(listIps, clientDomain)
+	# is server find the domain in the file
+	if specificLine != []:
+		siteInfo = makeFromArrayToString(specificLine)
+		siteInfo = bytes(siteInfo, 'utf-8')
+		s.sendto(siteInfo, clientAddress)
+	# else, send to parent server
+	else:
+		s.sendto(clientDomain, (parentIP, int(parentPort)))
+		data, parentAddress = s.recvfrom(1024)
+		data[3] = time.time()
+		listIps.append(data)					# todo add the address to the list of infos
+		s.sendto(data, clientAddress)
