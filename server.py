@@ -11,8 +11,16 @@ def creatListFromFile(fileName):
 	for line in Lines:
 		listFile.append(line.split(","))
 		# enter time stamp to when the server learned the info
-		line[i].append(time.time())
+		if (len(listFile[i]) == 3):
+			listFile[i].append(int(time.time()))
+		else:
+			thisTime = int(time.time())
+			passTime = thisTime - int(listFile[i][3])
+			if int(listFile[i][2]) <= passTime:
+				listFile.pop(i)
+				i = i - 1
 		i = i + 1
+	updateFile(fileName, listFile)
 	return listFile
 
 # getting 2D list and look for the domain
@@ -23,9 +31,6 @@ def searchDomainInList (listIPs, domain):
 	for oneList in listIPs:
 		try:
 			domainInList = listIPs[i][0]
-			# if TTL passed
-			if listIps[i][3] + listIps[i][2] < time.time():
-				listIPs.remove(i)
 			if domainInList == str(domain):
 				return listIPs[i]
 		except:
@@ -36,8 +41,17 @@ def searchDomainInList (listIPs, domain):
 def makeFromArrayToString(arr):
 	ret = ""
 	for w in arr:
-		ret = ret + w + ","
+		ret = ret + str(w) + ","
+	ret = ret[:-1]
 	return ret
+
+def updateFile(fileName, arrayList):
+	arrStr = []
+	for line in arrayList:
+		arrStr.append(makeFromArrayToString(line).replace("\n",""))
+	with open(fileName, 'w') as f:
+		for line in arrStr:
+			f.write("%s\n" % line)
 
 
 # argumnets from command line
@@ -62,8 +76,11 @@ while True:
 		s.sendto(siteInfo, clientAddress)
 	# else, send to parent server
 	else:
+		clientDomain = bytes(clientDomain, 'utf-8')
 		s.sendto(clientDomain, (parentIP, int(parentPort)))
 		data, parentAddress = s.recvfrom(1024)
-		data[3] = time.time()
-		listIps.append(data)					# todo add the address to the list of infos
+		arrayToAdd = data.decode('utf-8')
+		arrayToAdd = arrayToAdd.split(",")
+		listIps.append(arrayToAdd)
+		updateFile(ipsFileName, listIps)
 		s.sendto(data, clientAddress)
