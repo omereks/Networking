@@ -2,7 +2,7 @@ import socket
 import sys
 import time
 
-# getting a file and returning 2D list
+# read a file and initialize 2D list
 def creatListFromFile(fileName):
 	file1 = open(fileName, 'r')
 	Lines = file1.readlines()
@@ -13,9 +13,11 @@ def creatListFromFile(fileName):
 		# enter time stamp to when the server learned the info
 		if (len(listFile[i]) == 3):
 			listFile[i].append(int(time.time()))
+		# if the site address already has a time stamp
 		else:
 			thisTime = int(time.time())
 			passTime = thisTime - int(listFile[i][3])
+			# if TTL passed, remove the line
 			if int(listFile[i][2]) <= passTime:
 				listFile.pop(i)
 				i = i - 1
@@ -42,9 +44,10 @@ def makeFromArrayToString(arr):
 	ret = ""
 	for w in arr:
 		ret = ret + str(w) + ","
+	# remove the last ","
 	ret = ret[:-1]
 	return ret
-
+# function updates file according to our 2D array
 def updateFile(fileName, arrayList):
 	arrStr = []
 	for line in arrayList:
@@ -63,7 +66,6 @@ ipsFileName = sys.argv[4]
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.bind(('', int(myPort)))
 
-
 while True:
 	clientDomain, clientAddress = s.recvfrom(1024)
 	clientDomain = clientDomain.decode('utf-8')
@@ -77,10 +79,14 @@ while True:
 	# else, send to parent server
 	else:
 		clientDomain = bytes(clientDomain, 'utf-8')
+		# send to parent server
 		s.sendto(clientDomain, (parentIP, int(parentPort)))
 		data, parentAddress = s.recvfrom(1024)
 		arrayToAdd = data.decode('utf-8')
 		arrayToAdd = arrayToAdd.split(",")
+		# add the new site to 2D array
 		listIps.append(arrayToAdd)
+		# update the file according to the 2D array
 		updateFile(ipsFileName, listIps)
+		# send the answer back to client
 		s.sendto(data, clientAddress)
