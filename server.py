@@ -10,11 +10,11 @@ def creatListFromFile(fileName):
 	i = 0
 	for line in Lines:
 		listFile.append(line.split(","))
-		# enter time stamp to when the server learned the info
-		if (len(listFile[i]) == 3):
-			listFile[i].append(int(time.time()))
-		# if the site address already has a time stamp
-		else:
+		# put 0 if the line is static line
+		if len(listFile[i]) == 3:
+			listFile[i].append(0)
+		# if the site address is not static
+		if listFile[i][3] != 0 :
 			thisTime = int(time.time())
 			passTime = thisTime - int(listFile[i][3])
 			# if TTL passed, remove the line
@@ -85,8 +85,9 @@ while True:
 		arrayToAdd = data.decode('utf-8')
 		arrayToAdd = arrayToAdd.split(",")
 		# add the new site to 2D array
-		listIps.append(arrayToAdd)
-		# update the file according to the 2D array
-		updateFile(ipsFileName, listIps)
-		# send the answer back to client
-		s.sendto(data, clientAddress)
+        arrayToAdd[3] = time.time()
+        listIps.append(arrayToAdd)
+        # update the file according to the 2D array
+        updateFile(ipsFileName, listIps)
+        # send the answer back to client
+        s.sendto(data, clientAddress)
