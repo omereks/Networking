@@ -1,0 +1,2 @@
+www.google.co.il,8.8.8.8,300,0
+mail.google.co.il,9.9.9.9,240,0

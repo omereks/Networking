@@ -13,12 +13,12 @@ def creatListFromFile(fileName):
 		# put 0 if the line is static line
 		if len(listFile[i]) == 3:
 			listFile[i].append(0)
-		# if the site address is not static
-		if listFile[i][3] != 0 :
-			thisTime = int(time.time())
-			passTime = thisTime - int(listFile[i][3])
+		# if the site address is not  static
+		if (float(listFile[i][3]) > 0.0):
+			thisTime = time.time()
+			passTime = thisTime - float(listFile[i][3])
 			# if TTL passed, remove the line
-			if int(listFile[i][2]) <= passTime:
+			if (float(listFile[i][2]) <= passTime):
 				listFile.pop(i)
 				i = i - 1
 		i = i + 1
@@ -85,9 +85,9 @@ while True:
 		arrayToAdd = data.decode('utf-8')
 		arrayToAdd = arrayToAdd.split(",")
 		# add the new site to 2D array
-        arrayToAdd[3] = time.time()
-        listIps.append(arrayToAdd)
+		arrayToAdd[3] = time.time()
+		listIps.append(arrayToAdd)
         # update the file according to the 2D array
-        updateFile(ipsFileName, listIps)
+		updateFile(ipsFileName, listIps)
         # send the answer back to client
-        s.sendto(data, clientAddress)
+		s.sendto(data, clientAddress)
