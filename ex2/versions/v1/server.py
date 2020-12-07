@@ -1,6 +1,6 @@
 import socket,sys
 
-TCP_IP = '0.0.0.0'
+TCP_IP = '10.0.2.15'
 TCP_PORT = int(sys.argv[1])
 BUFFER_SIZE = 1024
 
