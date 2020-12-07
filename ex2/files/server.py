@@ -25,7 +25,7 @@ s.listen(1)
 
 while True:
 	conn, addr = s.accept()
-	print ('New connection from:', addr)
+	print ('New connection from:', addr) 
 	while True:
 		conn.settimeout(1.0)
 		try:
@@ -46,7 +46,7 @@ while True:
 		#connection#
 		connectionStatus = getConnection(arrLines)
 
-		if(str(fileName) == str('‫/redirect‬‬')):
+		if(str(fileName) == 'redirect' ):
 			MesRed = 'HTTP/1.1 301 Moved Permanently' + '\r\n' + 'Connection: close' + '\r\n' + 'Location: /result.html' + '\r\n\r\n'
 			#MesRed = "‫‪HTTP/1.1‬‬ ‫‪301‬‬ ‫‪Moved‬‬ ‫‪Permanently‬‬"+"\r\n‫‪"+"Connection:‬‬ ‫‪close‬‬\r\n" + "‫‪Location:‬‬ ‫‪/result.html‬‬" + "\r\n\r\n"
 			MesRed = str(MesRed)
@@ -66,10 +66,10 @@ while True:
 		
 
 
-
-		Mes1 = "HTTP/1.1‬‬ ‫‪200‬‬ ‫‪OK‬‬\r\n"
-		Mes2 = "Connection:‬‬ " + connectionStatus + "\r\n"
-		Mes3 = "Content-Length:‬‬ ‫‪" + str(contentLength) + "\r\n\r\n"
+		
+		Mes1 = "HTTP/1.1 200 OK\r\n" 
+		Mes2 = "Connection: " + connectionStatus + "\r\n"
+		Mes3 = "Content-Length: " + str(contentLength) + "\r\n\r\n"
 		
 		retMess = Mes1 + Mes2 + Mes3
 		
