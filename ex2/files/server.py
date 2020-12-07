@@ -13,7 +13,8 @@ def getConnection(arrLines):
 
 
 TCP_IP = '10.0.2.15'
-#TCP_PORT = 12372
+#TCP_PORT = 12364
+
 TCP_PORT = int(sys.argv[1])
 BUFFER_SIZE = 1024
 
@@ -46,11 +47,13 @@ while True:
 		connectionStatus = getConnection(arrLines)
 
 		if(str(fileName) == str('‫/redirect‬‬')):
-			MesRed = "‫‪HTTP/1.1‬‬ ‫‪301‬‬ ‫‪Moved‬‬ ‫‪Permanently‬‬"+"\r\n‫‪"+"Connection:‬‬ ‫‪close‬‬\r\n" + "‫‪Location:‬‬ ‫‪/result.html‬‬" + "\r\n\r\n"
+			MesRed = 'HTTP/1.1 301 Moved Permanently' + '\r\n' + 'Connection: close' + '\r\n' + 'Location: /result.html' + '\r\n\r\n'
+			#MesRed = "‫‪HTTP/1.1‬‬ ‫‪301‬‬ ‫‪Moved‬‬ ‫‪Permanently‬‬"+"\r\n‫‪"+"Connection:‬‬ ‫‪close‬‬\r\n" + "‫‪Location:‬‬ ‫‪/result.html‬‬" + "\r\n\r\n"
+			MesRed = str(MesRed)
 			conn.send(MesRed.encode())
 			break
 		if(not os.path.exists(fileName)):
-			MesErr = "‫‫‪HTTP/1.1‬‬ ‫‪404‬‬ ‫‪Not‬‬ ‫‪Found"+"\r\n‫‪"+"Connection:‬‬ ‫‪close‬‬"+ "\r\n\r\n"
+			MesErr = 'HTTP/1.1 404 Not Found' + '\r\n' + 'Connection: close' + '\r\n\r\n'
 			conn.send(MesErr.encode())
 			break
 		
